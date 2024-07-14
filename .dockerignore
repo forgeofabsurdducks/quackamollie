@@ -1,0 +1,14 @@
+.mypy_cache/
+.pytest_cache/
+.tox/
+bin/
+build/
+data/
+env/
+example/
+venv/
+*.egg-info
+.idea*
+.tmp
+.gitignore
+.gitlab-ci.yaml

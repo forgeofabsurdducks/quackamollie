@@ -1,0 +1,100 @@
+[build-system]
+requires = [
+    "setuptools",
+    "wheel"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quackamollie"
+version = "0.1a0dev0"
+description = "Run on your computer your own Telegram LLM chatbot using Ollama backed by models with Langchain or Llama-Index"
+readme = "README.rst"
+authors = [
+    {name = "QuactorAI", email = "quacktorai@gmail.com"},
+]
+license = {file = "LICENSE"}
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+]
+keywords = ["telegram", "bot", "aiogram", "langchain", "llama-index", "ollama", "llmsherpa"]
+requires-python = ">=3.10"
+dependencies = [
+    "quackamollie-core",
+]
+
+[project.optional-dependencies]
+lint = [
+    'check-manifest',
+    'flake8',
+    'readme_renderer',
+    'safety',
+    'setuptools',
+    'twine',
+    'wheel',
+]
+test = [
+    'coverage',
+    'pytest',
+    'pytest-cov',
+    'pytest-xdist',
+    'tox',
+]
+doc = [
+    'sphinx',
+    'sphinx-click',
+]
+devtools = [
+    'pgcli',
+    'quackamollie-devtools',
+]
+langchain = [
+    'quackamollie-langchain-model-manager',
+]
+llama-index = [
+    'quackamollie-llama-index-model-manager',
+]
+ollama = [
+    'quackamollie-ollama-model-manager',
+]
+langchain-common = [
+    'quackamollie-langchain-model-manager',
+    'quackamollie-model-langchain-simple',
+]
+llama-index-common = [
+    'quackamollie-llama-index-model-manager',
+    'quackamollie-model-llama-index-simple',
+]
+langchain-all = [
+    'quackamollie-langchain-model-manager',
+    'quackamollie-model-langchain-simple',
+]
+llama-index-all = [
+    'quackamollie-llama-index-model-manager',
+    'quackamollie-model-llama-index-simple',
+]
+common = [
+    'quackamollie-ollama-model-manager',
+    'quackamollie-langchain-model-manager',
+    'quackamollie-model-langchain-simple',
+    'quackamollie-llama-index-model-manager',
+    'quackamollie-model-llama-index-simple',
+]
+all = [
+    'quackamollie-ollama-model-manager',
+    'quackamollie-langchain-model-manager',
+    'quackamollie-model-langchain-simple',
+    'quackamollie-llama-index-model-manager',
+    'quackamollie-model-llama-index-simple',
+]
+
+[project.urls]
+Homepage = "https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+exclude = ["tests"]
+namespaces = true

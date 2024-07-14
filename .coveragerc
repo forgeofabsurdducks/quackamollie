@@ -1,0 +1,13 @@
+[paths]
+source =
+    src
+
+[run]
+branch = True
+parallel = true
+source =
+    src
+    tests
+
+[report]
+include_namespace_packages = true

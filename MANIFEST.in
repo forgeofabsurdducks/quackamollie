@@ -1,0 +1,22 @@
+recursive-include src *.py
+recursive-include config/examples *.yml
+recursive-include docs *.rst
+recursive-include scripts *
+recursive-include tests *.py
+recursive-include tests/data *
+recursive-exclude images *
+include .bumpversion.toml
+include .coveragerc
+include .dockerignore
+include .gitchangelog.rc
+include .gitlab-ci.yml
+include CHANGELOG.rst
+include CONTRIBUTING.md
+include docker-compose.yml
+include Dockerfile
+include LICENSE
+include Makefile
+include pytest.ini
+include tox.ini
+include README.rst
+include VERSION

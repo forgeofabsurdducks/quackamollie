@@ -1,0 +1,53 @@
+stages:
+  - build
+  - build-docker
+  - test
+  - trigger-release
+  - check
+  - release
+  - release-docker
+  - docs
+
+variables:
+  # External variables (typically CI secret variables) that this script depends on to run fully
+  #------------------------------------------------------------------------------------------------------------------
+  # CI/CD & Gitlab-runner variables
+  #   - PRIVATE_DEPLOY_KEY: Private deploy key used to trigger the version release
+  #   - PRIVATE_DEPLOY_KEY_PASSWORD: (Optional) Private deploy key's passphrase to unlock the PRIVATE_DEPLOY_KEY
+  #   - TEAM_EMAIL: (Optional) E-mail of the team. Used for CI registry secret creation.
+  #                 Default: ${DEFAULT_TEAM_EMAIL}
+  #   - TEAM_USER_NAME: (Optional) E-mail of the team. Used for CI registry secret creation.
+  #                 Default: ${DEFAULT_TEAM_USER_NAME}
+  #------------------------------------------------------------------------------------------------------------------
+  # Twine variables
+  #   - TWINE_PASSWORD: PyPi repository password
+  #   - TWINE_REPOSITORY_URL: PyPi repository in the form of:
+  #                           https://example.com/repository/name/
+  #                             => Don't forget the final '/'
+  #   - TWINE_USERNAME: PyPi repository username
+  #------------------------------------------------------------------------------------------------------------------
+  # Docker variables
+  #   - CI_REGISTRY: Docker registry for the CI
+  #   - CI_REGISTRY_USER: CI docker registry user
+  #   - CI_REGISTRY_PASSWORD: CI docker registry password
+  #   - CI_REGISTRY_CERT: (Optional) CI docker registry TSL certificate content
+  #   - PROXY_REGISTRY: (Optional) Docker proxy registry for the CI
+  #   - PROXY_REGISTRY_USER: (Optional) CI docker proxy registry user
+  #   - PROXY_REGISTRY_PASSWORD: (Optional) CI docker proxy registry password
+  #   - PROXY_REGISTRY_CERT: (Optional) CI docker proxy registry TSL certificate content
+  #------------------------------------------------------------------------------------------------------------------
+
+  # Default variables
+  DEFAULT_TEAM_EMAIL: forgeofabsurdducks@gmail.com
+  DEFAULT_TEAM_USER_NAME: "Forge of Absurd Ducks"
+
+
+###### Includes ######
+include:
+  - project: 'forge_of_absurd_ducks/quackamollie/ops/quackamollie_workflows'
+    ref: master
+    file: '/workflows/python_docker.build-docker_release-docker.gitlab-ci.yml'
+
+  - project: 'forge_of_absurd_ducks/quackamollie/ops/quackamollie_workflows'
+    ref: master
+    file: '/workflows/quackamollie_workflow.trigger-release_check.gitlab-ci.yml'

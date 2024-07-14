@@ -1,0 +1,59 @@
+log_dir: YOUR_LOGS_DIRECTORY__logs_FOR_EXAMPLE  # Can also be defined through CLI or environment variables
+serve:
+    bot_token: YOUR_BOT_TOKEN__REQUIRED
+    admin_ids: ADMIN_TELEGRAM_IDS_SEPARATED_BY_COMMAS_WITHOUT_SPACE
+    moderator_ids: MODERATOR_TELEGRAM_IDS_SEPARATED_BY_COMMAS_WITHOUT_SPACE
+    user_ids: USER_TELEGRAM_IDS_SEPARATED_BY_COMMAS_WITHOUT_SPACE
+    # default_model_manager: MODEL_MANAGER_TO_USER_BY_DEFAULT__CAN_BE_EMPTY_OR_FOR_EXAMPLE_ollama
+    # default_model: MODEL_MANAGER_TO_USER_BY_DEFAULT__CAN_BE_EMPTY_OR_FOR_EXAMPLE_llama3:latest
+    db_protocol: YOUR_DATABASE_HOST__postgresql+asyncpg_BY_DEFAULT
+    db_host: YOUR_DATABASE_HOST__0.0.0.0_BY_DEFAULT
+    db_name: YOUR_DATABASE_NAME__quackamollie_BY_DEFAULT
+    db_username: YOUR_DATABASE_USER
+    db_password: YOUR_DATABASE_PASSWORD
+    db_port: YOUR_DATABASE_PORT
+    db_url: DIRECTLY_OVERRIDE_THE_WHOLE_DATABASE_URL_IF_NEEDED
+db:
+    db_protocol: YOUR_DATABASE_HOST__postgresql+asyncpg_BY_DEFAULT
+    db_host: YOUR_DATABASE_HOST__0.0.0.0_BY_DEFAULT
+    db_name: YOUR_DATABASE_NAME__quackamollie_BY_DEFAULT
+    db_username: YOUR_DATABASE_USER
+    db_password: YOUR_DATABASE_PASSWORD
+    db_port: YOUR_DATABASE_PORT
+    db_url: DIRECTLY_OVERRIDE_THE_WHOLE_DATABASE_URL_IF_NEEDED
+logging:
+  version: 1
+  disable_existing_loggers: False
+  formatters:
+    simple:
+      format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  handlers:
+    console:
+      class: logging.StreamHandler
+      level: DEBUG
+      formatter: simple
+      stream: ext://sys.stdout
+    info_file_handler:
+      class: logging.handlers.RotatingFileHandler
+      level: INFO
+      formatter: simple
+      # __LOG_DIR__ is replaced by the CLI with the given option -l/--log-dir/${QUACKAMOLLIE_LOG_DIR}/or like above
+      filename: __LOG_DIR__/info.log
+      maxBytes: 67108864
+      backupCount: 3
+      encoding: utf8
+    error_file_handler:
+      class: logging.handlers.RotatingFileHandler
+      level: ERROR
+      formatter: simple
+      # __LOG_DIR__ is replaced by the CLI with the given option -l/--log-dir/${QUACKAMOLLIE_LOG_DIR}/or like above
+      filename: __LOG_DIR__/errors.log
+      maxBytes: 67108864
+      backupCount: 3
+      encoding: utf8
+  root:
+    level: INFO
+    handlers:
+      - console
+      - info_file_handler
+      - error_file_handler
