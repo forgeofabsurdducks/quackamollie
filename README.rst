@@ -6,7 +6,7 @@ Quackamollie
 :Package name: quackamollie
 :Description: Run on your computer your own Telegram LLM chatbot using Ollama backed by models with Langchain or Llama-Index
 :Version: 0.1a0dev0
-:Main page: https://gitlab.com/forge_of_absurd_ducks/quackamollie/lib/quackamollie
+:Main page: https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie
 :PyPI package: https://pypi.org/project/quackamollie/
 :Docker Image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1a0dev0
 :Build Status:
@@ -68,7 +68,7 @@ If needed, the project also enables more advanced users to implement their own m
 
 The current list of all Quackamollie's projects is:
 
-- `this repository <https://gitlab.com/forge_of_absurd_ducks/quackamollie/lib/quackamollie>`_ for easy installation of quackamollie's components
+- `this repository <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie>`_ for easy installation of quackamollie's components
 - `quackamollie-core <https://gitlab.com/forge_of_absurd_ducks/quackamollie/lib/quackamollie_core>`_, the core of the application in Python, including database management
 - model managers in Python to serve models through Telegram
 
@@ -147,13 +147,13 @@ First, you should ensure you went through all requirements:
      git clone https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie
      cd quackamollie/
 
-  - Download the `docker-compose.yml` file from the repository:
+  - Or download the `docker-compose.yml` file from the repository:
 
   .. code-block:: bash
 
      wget https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/raw/master/docker-compose.yml
 
-  - Copy (and adapt if needed) this code:
+  - Or copy (and adapt if needed) this code:
 
   .. code-block:: yaml
 
@@ -197,6 +197,9 @@ First, you should ensure you went through all requirements:
         volumes:
           - ${QUACKAMOLLIE_CONFIG_FILE}:/config/config.yml
 
+  - Or if you want to run Ollama in Docker instead of installing it locally, you should check out the
+    `quackamollie_ops <https://gitlab.com/forge_of_absurd_ducks/quackamollie/ops/quackamollie_ops>`_ repository
+
 
 
 Configuration
@@ -216,13 +219,13 @@ Configuration file
      # If needed, another configuration file example is given to set more advanced logging
      cp config/examples/config_with_logging.yml config/config.yml
 
-  - Download the `config.yml` file from the repository:
+  - Or download the `config.yml` file from the repository:
 
   .. code-block:: bash
 
      wget https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/raw/master/config/examples/config.yml
 
-  - Copy and adapt this code:
+  - Or copy and adapt this code:
 
   .. code-block:: yaml
 
@@ -372,7 +375,7 @@ Test your bot
 
 - After choosing a model, you should expect an output like this one. Here, we chose the model `🦙☝️ llama-index | 🦙☝️ simple-llama-index` for demonstration.
 
-.. image:: https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/raw/master/images/model_management_common_install.png
+.. image:: https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/raw/master/images/model_llama_index_simple_chosen.png
    :alt: Answer expected when choosing the model `llama-index | simple-llama-index` in the `Chat Settings/Model Management` section
 
 - If you hit the `Go Back` button, you should see your choice listed
@@ -414,7 +417,7 @@ If you've been banned
 
 - Users are banned after less than 10 messages sent. It is a strict rule to improve security. We chose such a rule because this bot
   aims for private use, eventually with friends or family. Therefore, adding new users shouldn't be something you do much often
-  and this helps reducing the possibilities of external DDoS attacks.
+  and this helps a bit reducing attacks possibilities.
 
 - Message of ban users are ignored by a dedicated `outer middleware <https://docs.aiogram.dev/en/latest/dispatcher/middlewares.html>`_ filtering input messages.
 
