@@ -51,6 +51,14 @@ Quackamollie
 
 ----
 
+Github Notice
+=============
+
+This Github repository is a fork on Github of the `official Gitlab repository of Quackamollie <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie>`_.
+This fork is maintained up-to-date by the Forge of Absurd Ducks and the author of the Quackamollie project, mainly to improve web referencing the project.
+
+Please consult `this Gitlab group <https://gitlab.com/forge_of_absurd_ducks/quackamollie>`_ for the complete list of the Quackamollie's repositories.
+
 
 Project description
 ===================
