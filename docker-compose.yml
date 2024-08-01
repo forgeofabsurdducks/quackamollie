@@ -6,8 +6,6 @@ services:
       POSTGRES_USER: ${QUACKAMOLLIE_DB_USERNAME}
       POSTGRES_PASSWORD: ${QUACKAMOLLIE_DB_PASSWORD}
       POSTGRES_DB: ${QUACKAMOLLIE_DB_NAME}
-    ports:
-      - ${QUACKAMOLLIE_DB_HOST}:${QUACKAMOLLIE_DB_PORT}:5432
     network_mode: host
     restart: unless-stopped
     volumes:
@@ -15,7 +13,7 @@ services:
 
   quackamollie_db_migration:
     image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:latest
-    # pull_policy: always
+    pull_policy: always
     container_name: quackamollie_db_migration
     command: "-vvvv -c /config/config.yml db alembic upgrade head"
     network_mode: host
@@ -27,7 +25,7 @@ services:
 
   quackamollie:
     image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:latest
-    # pull_policy: always
+    pull_policy: always
     container_name: quackamollie
     command: "-vvvv -c /config/config.yml serve"
     network_mode: host
