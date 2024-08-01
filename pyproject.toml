@@ -23,7 +23,7 @@ classifiers = [
 keywords = ["telegram", "bot", "aiogram", "langchain", "llama-index", "ollama", "llmsherpa"]
 requires-python = ">=3.10"
 dependencies = [
-    "quackamollie-core>=0.1rc0",
+    "quackamollie-core>=0.1rc1",
 ]
 
 [project.optional-dependencies]

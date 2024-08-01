@@ -15,7 +15,7 @@ RUN export WHEEL_DIST="$(ls -Au /dist/*.whl | head -1)"; pip install --no-warn-s
 
 
 ### Release ###
-FROM registry.gitlab.com/forge_of_absurd_ducks/quackamollie/lib/quackamollie_core:0.1rc0
+FROM registry.gitlab.com/forge_of_absurd_ducks/quackamollie/lib/quackamollie_core:0.1rc1
 
 COPY --chown=root:root --from=builder /install /usr/local
 
