@@ -1,19 +1,19 @@
 services:
   quackamollie_postgres:
-    image: postgres:14
+    image: postgres:${POSTGRES_DOCKER_TAG:-16}
     container_name: quackamollie_postgres
     environment:
+      POSTGRES_DB: ${QUACKAMOLLIE_DB_NAME:-quackamollie}
       POSTGRES_USER: ${QUACKAMOLLIE_DB_USERNAME}
       POSTGRES_PASSWORD: ${QUACKAMOLLIE_DB_PASSWORD}
-      POSTGRES_DB: ${QUACKAMOLLIE_DB_NAME}
     network_mode: host
     restart: unless-stopped
     volumes:
       - ./data/quackamollie/database:/var/lib/postgresql/data
 
   quackamollie_db_migration:
-    image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:latest
-    pull_policy: always
+    image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:${QUACKAMOLLIE_DOCKER_TAG:-latest}
+    # pull_policy: always
     container_name: quackamollie_db_migration
     command: "-vvvv -c /config/config.yml db alembic upgrade head"
     network_mode: host
@@ -24,8 +24,8 @@ services:
       - ${QUACKAMOLLIE_CONFIG_FILE}:/config/config.yml
 
   quackamollie:
-    image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:latest
-    pull_policy: always
+    image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:${QUACKAMOLLIE_DOCKER_TAG:-latest}
+    # pull_policy: always
     container_name: quackamollie
     command: "-vvvv -c /config/config.yml serve"
     network_mode: host
