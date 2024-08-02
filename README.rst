@@ -5,10 +5,10 @@ Quackamollie
 :Name: Quackamollie
 :Package name: quackamollie
 :Description: Run on your computer your own Telegram LLM chatbot using Ollama backed by models with Langchain or Llama-Index
-:Version: 0.1b0dev0
+:Version: 0.1b0
 :Main page: https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie
 :PyPI package: https://pypi.org/project/quackamollie/
-:Docker Image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0dev0
+:Docker Image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0
 :Build Status:
     :Master: |master_pipeline_badge| |master_coverage_badge|
     :Dev: |dev_pipeline_badge| |dev_coverage_badge|
@@ -190,7 +190,7 @@ First, you should ensure you went through all requirements:
           - ./data/quackamollie/database:/var/lib/postgresql/data
 
       quackamollie_db_migration:
-        image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0dev0
+        image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0
         # pull_policy: always
         container_name: quackamollie_db_migration
         command: "-vvvv -c /config/config.yml db alembic upgrade head"
@@ -202,7 +202,7 @@ First, you should ensure you went through all requirements:
           - ${QUACKAMOLLIE_CONFIG_FILE}:/config/config.yml
 
       quackamollie:
-        image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0dev0
+        image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0
         # pull_policy: always
         container_name: quackamollie
         command: "-vvvv -c /config/config.yml serve"
@@ -625,13 +625,13 @@ Install
 
 .. code-block:: bash
 
-   pip install dist/quackamollie-0.1b0dev0.tar.gz
+   pip install dist/quackamollie-0.1b0.tar.gz
 
 - Or install it from wheel
 
 .. code-block:: bash
 
-   pip install dist/quackamollie-0.1b0dev0.whl
+   pip install dist/quackamollie-0.1b0.whl
 
 - Or install it from PyPi repository
 
@@ -639,7 +639,7 @@ Install
 
    pip install quackamollie  # latest
    # or
-   pip install "quackamollie==0.1b0dev0"
+   pip install "quackamollie==0.1b0"
 
 
 Docker
@@ -648,7 +648,7 @@ Docker
 
 .. code-block:: bash
 
-   docker build --network=host -t quackamollie:0.1b0dev0 .
+   docker build --network=host -t quackamollie:0.1b0 .
 
 - The official Docker image of this project is available at: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie
 
@@ -658,7 +658,7 @@ Docker
 
    docker pull registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:latest  # or dev
    # or
-   docker pull registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0dev0
+   docker pull registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0
 
 
 Docker-compose
@@ -707,14 +707,14 @@ Database migration
     docker run --rm --name quackamollie-migration \
     --network host \
     --mount type=bind,source="$(pwd)"/config/config.yml,target=/config/config.yml,readonly \
-    registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0dev0 \
+    registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0 \
     -vvvv -c /config/config.yml db alembic upgrade head
 
     # if you need to run it with sudo don't forget to add the -E option to pass the environment variables you've set
     sudo -E docker run --rm --name quackamollie-migration \
     --network host \
     --mount type=bind,source="$(pwd)"/config/config.yml,target=/config/config.yml,readonly \
-    registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0dev0 \
+    registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0 \
     -vvvv -c /config/config.yml db alembic upgrade head
 
   - Or you can achieve the same in a `docker-compose.yml` file as demonstrated in this repository
@@ -723,7 +723,7 @@ Database migration
 
     services:
       quackamollie_db_migration:
-        image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0dev0
+        image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0
         container_name: quackamollie_db_migration
         command: "-vvvv -c /config/config.yml db alembic upgrade head"
         network_mode: host
