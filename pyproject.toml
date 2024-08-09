@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "quackamollie"
-version = "0.1b0"
+version = "0.1rc0dev0"
 description = "Run on your computer your own Telegram LLM chatbot using Ollama backed by models with Langchain or Llama-Index"
 readme = "README.rst"
 authors = [
@@ -42,10 +42,6 @@ test = [
     'pytest-cov',
     'pytest-xdist',
     'tox',
-]
-doc = [
-    'sphinx',
-    'sphinx-click',
 ]
 devtools = [
     'pgcli',

@@ -5,10 +5,10 @@ Quackamollie
 :Name: Quackamollie
 :Package name: quackamollie
 :Description: Run on your computer your own Telegram LLM chatbot using Ollama backed by models with Langchain or Llama-Index
-:Version: 0.1b0
+:Version: 0.1rc0dev0
 :Main page: https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie
 :PyPI package: https://pypi.org/project/quackamollie/
-:Docker Image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0
+:Docker Image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1rc0dev0
 :Build Status:
     :Master: |master_pipeline_badge| |master_coverage_badge|
     :Dev: |dev_pipeline_badge| |dev_coverage_badge|
@@ -44,7 +44,13 @@ Quackamollie
    :target: https://gitlab.com/forge_of_absurd_ducks/quackamollie/lib/quackamollie_core/commits/dev
    :alt: Quackamollie-core Dev coverage status
 
+.. contents:: Table of Contents
+    :depth: 3
+    :local:
+    :backlinks: none
+
 ----
+
 
 Project description
 ===================
@@ -52,7 +58,7 @@ Quackamollie is a Telegram chat bot in Python using the library `aiogram` to ser
 
 This package is the main repository of the Quackamollie project.
 It is a bundle of the `quackamollie-core <https://gitlab.com/forge_of_absurd_ducks/quackamollie/lib/quackamollie_core>`_ package with extra-dependencies to install application addons.
-It also contains a `docker-compose.yml` file to easily deploy the application using docker.
+It also contains several `docker-compose.yml` files to easily deploy the application using docker.
 
 
 About Quackamollie
@@ -70,7 +76,7 @@ What this project is:
 
 What this project is NOT:
 
-- it is NOT a platform with servers aiming to provide service to a large number of users
+- it is NOT a platform with maintained servers aiming to provide service to a large number of users (you have to run it on your own)
 - it is NOT a commercial project
 
 
@@ -120,157 +126,120 @@ Then, we will work on new functionalities such as (not ordered):
 - in-chat user ability to override chat type to private for chats where the user is alone with the bot
 - in-chat user ability to manage resource namespaces which manages uploaded files visibility across chats
 - in-chat admin ability to manage globally available model-tools
+- in-chat admin ability to reload the list of available models
 
 The documentation also needs a lot of improvements, sorry for the inconvenience.
 
-We may also release additional tutorials on other platforms.
+- Each project automatically generates its own documentation and expose it using Gitlab pages. The documentation link is referenced at the top of each project.
+- This repository is the main entrypoint for all Quackamollie's projects but it doesn't provide yet dedicated Gitlab pages.
+  Therefore, we are planning to write a more advanced and complete documentation website alongside this repository.
+
+We may also release additional tutorials on other platforms (maybe videos).
 
 
 Quickstart
 ==========
-If you want to automatically deploy your own version of Quackamollie using your own gitlab-runner on your own computer,
-we kindly invite you to look at the `quackamollie_ops <https://gitlab.com/forge_of_absurd_ducks/quackamollie/ops/quackamollie_ops>`_ repository
-and possibly fork it.
-
-Otherwise, you are in the right place to start running your own chat bot.
 This section covers all you need to do to deploy your own Quackamollie chat bot.
 
-The following tutorial has been tested on an Ubuntu 22.04 architecture using Python 3.10 but, since the deployment is based on docker images, it should be easy to adapt commands to other distributions or OS.
+The following tutorials have been tested on an Ubuntu 22.04 architecture using Python 3.10.
+However, commands based on docker should be customizable for other distributions or OS.
 
 
-Requirements
-------------
-First, you should ensure you went through all requirements:
+Installation/Deployments methods
+--------------------------------
 
-- Install Docker (instructions depend on your platform)
-- Install `Ollama <https://ollama.com/>`_
-- Pull an Ollama model, for example `llama3`
+TODO: Convert to static urls instead of relative ones
+
+It is recommended to install or deploy the project one of the following ways:
+
+- `Install Ollama and Quackamollie locally <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/tree/master/docs/install/install_full_locally.rst>`_
+- `Install Ollama locally and deploy Quackamollie in Docker <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/tree/master/docs/install/install_ollama_locally.rst>`_
+- `Deploy Ollama and Quackamollie in Docker <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/tree/master/docs/install/install_full_docker.rst>`_ (**easiest** and recommended method)
+- `Deploy Ollama in Docker with GPU <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/tree/master/docs/install/install_ollama_gpu.rst>`_
+- `Deploy Open WebUI alongside Ollama and Quackamollie in Docker <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/tree/master/docs/install/install_open_webui.rst>`_ (for Ollama models management)
+- If you want to **automatically deploy** Ollama and Quackamollie in Docker using **your own gitlab-runner** on your own computer,
+  we kindly invite you to follow the tutorial of the `quackamollie_ops <https://gitlab.com/forge_of_absurd_ducks/quackamollie/ops/quackamollie_ops>`_ repository
+
+
+Configuration methods
+---------------------
+
+Environment variables
+~~~~~~~~~~~~~~~~~~~~~
+Configuration can be done using environment variables prefixed by `QUACKAMOLLIE_`.
+The list of available options can be obtained by running `quackamollie --help` and `quackamollie serve --help`.
+
+To ease deployment, you can set environment variables using protected variables in your automation tool
+or create a `.env`, `.envrc` or `envrc` file and load it using, for example, `source envrc`.
+
+|
+
+This is a list of the most commonly used environment variables:
+
+- `QUACKAMOLLIE_CONFIG_FILE` allows you to specify a configuration file for Quackamollie
+- `QUACKAMOLLIE_BOT_TOKEN` is for the bot token you can retrieve from `Telegram BotFather <https://core.telegram.org/bots/features#botfather>`_
+- `QUACKAMOLLIE_ADMIN_IDS` is a list of Telegram user IDs separated by commas without space, specifying the administrators of your Quackamollie instance
+- `QUACKAMOLLIE_MODERATOR_IDS` is a list of Telegram user IDs separated by commas without space, specifying the moderators of your Quackamollie instance
+- `QUACKAMOLLIE_USER_IDS` is a list of Telegram user IDs separated by commas without space, specifying the basic users of your Quackamollie instance
+- `QUACKAMOLLIE_DB_HOST` is the hostname of your Postgres database, if you run it locally it is probably `0.0.0.0`,
+  else if you run it in docker it is probably `quackamollie_postgres`
+- `QUACKAMOLLIE_DB_PORT` is the port of your Postgres database, typically it is `5432`
+- `QUACKAMOLLIE_DB_NAME` is the name of your Postgres database dedicated to Quackamollie, it is typically `quackamollie`
+- `QUACKAMOLLIE_DB_USERNAME` is the username to connect to your Postgres database
+- `QUACKAMOLLIE_DB_PASSWORD` is the password to connect to your Postgres database
+- `QUACKAMOLLIE_OLLAMA_BASE_URL` is the URL of your Ollama instance, if you run it locally the URL is typically `http://0.0.0.0:11434`,
+  or if it runs in docker the URL is typically `http://${QUACKAMOLLIE_OLLAMA_HOST:-quackamollie-ollama}:11434`
+
+Additionally, if you are using the `docker-compose.yml` files, you can set these variables:
+
+- `POSTGRES_DOCKER_TAG` overrides the tag to use for the Postgres docker image, by default it is `16`
+- `OLLAMA_DOCKER_TAG` overrides the tag to use for the Ollama docker image, by default it is `latest`
+- `QUACKAMOLLIE_OLLAMA_HOST` overrides the Ollama hostname and is used to infer the `QUACKAMOLLIE_OLLAMA_BASE_URL` environment variable,
+  by default it is `quackamollie-ollama`
+- `QUACKAMOLLIE_DOCKER_TAG` overrides the tag to use for the Quackamollie docker images, by default it is `latest`
+
+If you are using the additional `gpu.docker-compose.yml` file to enable GPU in Ollama:
+
+- `OLLAMA_GPU_DRIVER` overrides the driver to use for your GPU in your Ollama instance, by default it is `nvidia`
+- `OLLAMA_GPU_COUNT` overrides the GPU count available in your Ollama instance, by default it is `1`
+
+If you are using the additional `open-webui.docker-compose.yml` file to deploy an Open WebUI instance:
+
+- `OPEN_WEBUI_DOCKER_TAG` overrides the tag to use for Open WebUI docker images, by default it is `latest`
+- `OPEN_WEBUI_HOST` overrides the hostname of your Open WebUI instance, by default it is `quackamollie-open-webui`
+- `OPEN_WEBUI_PORT` overrides the port on which your Open WebUI instance is served, by default it is `3000`
+
+|
+
+If you're using the default values and no configuration file, then **the minimal environment variables you should set are**:
+
+- `QUACKAMOLLIE_BOT_TOKEN` must be set to a valid value given by the `BotFather <https://core.telegram.org/bots/features#botfather>`_
+- `QUACKAMOLLIE_DB_USERNAME` should be set to secure your Postgres database
+- `QUACKAMOLLIE_DB_PASSWORD` should be set to secure your Postgres database
+- `QUACKAMOLLIE_ADMIN_IDS` should typically at least contain your own Telegram ID or you will not be able to request your bot
+
+**N.B**: If you don't know your own ID, please start the bot without specifying it, then send one message that will be rejected
+and finally retrieve your ID from the logs or `user_filter` files, as explained in `Add a user ID <Add a user ID>`_.
+
+
+Configuration file (optional)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Alternatively, you can configure your instance with a configuration file.
+Examples are given in the `config/examples folder <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/tree/master/config/examples>`_.
+You can copy and adapt the given example `config/examples/config.yml`.
+If needed, a configuration file example `config/examples/config_with_logging.yml` shows how to set more advanced logging.
+
+Alternatively, you can directly download the `config.yml` file from the repository and then adapt it to your needs:
 
 .. code-block:: bash
 
-   ollama pull llama3
+  wget https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/raw/master/config/examples/config.yml
 
-   # Alternatively, you can use a better model but also bigger (~8Go)
-   ollama pull llama3:8b-instruct-q8_0
+As shown in the example below, your configuration file may contain a section `db` to allow initialization of the
+Postgres database using `quackamollie db alembic` commands.
+If you want to avoid duplicated entries between `serve` and `db` sections, you may want to use `environment variables <Environment variables>`_ instead.
 
-- `Create a new Telegram bot using the BotFather <https://core.telegram.org/bots/features#botfather>`_ and get your bot API token
-
-- Clone the repository or acquire the `docker-compose.yml` file one of the following way:
-
-  - Clone the git repository (recommended way):
-
-  .. code-block:: bash
-
-     git clone https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie
-     cd quackamollie/
-
-  - Or download the `docker-compose.yml` file from the repository:
-
-  .. code-block:: bash
-
-     wget https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/raw/master/docker-compose.yml
-
-  - Or copy (and adapt if needed) this code:
-
-  .. code-block:: yaml
-
-    services:
-      quackamollie_postgres:
-        image: postgres:14
-        container_name: quackamollie_postgres
-        environment:
-          POSTGRES_USER: ${QUACKAMOLLIE_DB_USERNAME}
-          POSTGRES_PASSWORD: ${QUACKAMOLLIE_DB_PASSWORD}
-          POSTGRES_DB: ${QUACKAMOLLIE_DB_NAME}
-        ports:
-          - ${QUACKAMOLLIE_DB_HOST}:${QUACKAMOLLIE_DB_PORT}:5432
-        network_mode: host
-        restart: unless-stopped
-        volumes:
-          - ./data/quackamollie/database:/var/lib/postgresql/data
-
-      quackamollie_db_migration:
-        image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0
-        # pull_policy: always
-        container_name: quackamollie_db_migration
-        command: "-vvvv -c /config/config.yml db alembic upgrade head"
-        network_mode: host
-        restart: no
-        depends_on:
-          - quackamollie_postgres
-        volumes:
-          - ${QUACKAMOLLIE_CONFIG_FILE}:/config/config.yml
-
-      quackamollie:
-        image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0
-        # pull_policy: always
-        container_name: quackamollie
-        command: "-vvvv -c /config/config.yml serve"
-        network_mode: host
-        restart: unless-stopped
-        depends_on:
-          - quackamollie_postgres
-          - quackamollie_db_migration
-        volumes:
-          - ${QUACKAMOLLIE_CONFIG_FILE}:/config/config.yml
-
-  - Or if you want to run Ollama in Docker instead of installing it locally, you should check out the
-    `quackamollie_ops <https://gitlab.com/forge_of_absurd_ducks/quackamollie/ops/quackamollie_ops>`_ repository
-
-
-
-Configuration
--------------
-
-Configuration file
-~~~~~~~~~~~~~~~~~~
-
-- Create a configuration file one of the following way:
-
-  - If you cloned the git repository (recommended way), configuration file examples are located at `config/examples`. Copy and adapt one of the example:
-
-  .. code-block:: bash
-
-     cp config/examples/config.yml config/config.yml
-
-     # If needed, another configuration file example is given to set more advanced logging
-     cp config/examples/config_with_logging.yml config/config.yml
-
-  - Or download the `config.yml` file from the repository:
-
-  .. code-block:: bash
-
-     wget https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/raw/master/config/examples/config.yml
-
-  - Or copy and adapt this code:
-
-  .. code-block:: yaml
-
-    serve:
-        bot_token: YOUR_BOT_TOKEN__REQUIRED
-        admin_ids: ADMIN_TELEGRAM_IDS_SEPARATED_BY_COMMAS_WITHOUT_SPACE
-        moderator_ids: MODERATOR_TELEGRAM_IDS_SEPARATED_BY_COMMAS_WITHOUT_SPACE
-        user_ids: USER_TELEGRAM_IDS_SEPARATED_BY_COMMAS_WITHOUT_SPACE
-        # default_model_manager: MODEL_MANAGER_TO_USER_BY_DEFAULT__CAN_BE_EMPTY_OR_FOR_EXAMPLE_ollama
-        # default_model: MODEL_MANAGER_TO_USER_BY_DEFAULT__CAN_BE_EMPTY_OR_FOR_EXAMPLE_llama3:latest
-        db_protocol: YOUR_DATABASE_HOST__postgresql+asyncpg_BY_DEFAULT
-        db_host: YOUR_DATABASE_HOST__0.0.0.0_BY_DEFAULT
-        db_name: YOUR_DATABASE_NAME__quackamollie_BY_DEFAULT
-        db_username: YOUR_DATABASE_USER
-        db_password: YOUR_DATABASE_PASSWORD
-        db_port: YOUR_DATABASE_PORT
-        db_url: DIRECTLY_OVERRIDE_THE_WHOLE_DATABASE_URL_IF_NEEDED
-    db:
-        db_protocol: YOUR_DATABASE_HOST__postgresql+asyncpg_BY_DEFAULT
-        db_host: YOUR_DATABASE_HOST__0.0.0.0_BY_DEFAULT
-        db_name: YOUR_DATABASE_NAME__quackamollie_BY_DEFAULT
-        db_username: YOUR_DATABASE_USER
-        db_password: YOUR_DATABASE_PASSWORD
-        db_port: YOUR_DATABASE_PORT
-        db_url: DIRECTLY_OVERRIDE_THE_WHOLE_DATABASE_URL_IF_NEEDED
-
-
-- Don't forget to change your configuration file with your own values, including the bot API token that you can get from `the Telegram BotFather <https://core.telegram.org/bots/features#botfather>`_. You may obtain a configuration file like this one:
+This is an example of what your configuration file can look like:
 
 .. code-block:: yaml
 
@@ -293,84 +262,33 @@ Configuration file
     db_password: **************************************************
     db_name: quackamollie
 
-- N.B: If you don't know your own user ID or others IDs, no worries. For now, just comment the concerned lines with '#'.
-  This quickstart contains a dedicated section to help you retrieve your own ID once your bot is running.
 
+Post-installation generic methods
+---------------------------------
+In these subsections, we present post-installations steps which requires your bot to be started.
+These subsections show what you can expect to see in Telegram and how to change your settings to get started.
 
-(Optional) Environment variables file
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-- To ease deployment, you can create a `.env`, `.envrc` or `envrc` file with the following content:
-
-.. code-block:: bash
-
-  export QUACKAMOLLIE_CONFIG_FILE="config/config.yml"
-  export QUACKAMOLLIE_DB_HOST="YOUR_DATABASE_HOST"
-  export QUACKAMOLLIE_DB_PORT="YOUR_DATABASE_PORT"
-  export QUACKAMOLLIE_DB_USERNAME="YOUR_DATABASE_USER"
-  export QUACKAMOLLIE_DB_PASSWORD="YOUR_DATABASE_strong_PASSWORD"
-  export QUACKAMOLLIE_DB_NAME="YOUR_DATABASE_NAME"
-
-- Don't forget to change your environment file with your own values which should match what is declared in you configuration file.
-  For example, let's suppose the previous configuration given in example is saved in the `config/config.yml` file, then your `.env` file should look like this:
-
-.. code-block:: bash
-
-  export QUACKAMOLLIE_CONFIG_FILE="config/config.yml"
-  export QUACKAMOLLIE_DB_HOST="0.0.0.0"
-  export QUACKAMOLLIE_DB_PORT="5432"
-  export QUACKAMOLLIE_DB_USERNAME="quackamollie"
-  export QUACKAMOLLIE_DB_PASSWORD="**************************************************"
-  export QUACKAMOLLIE_DB_NAME="quackamollie"
-
-- Then load your created environment file
-
-.. code-block:: bash
-
-  source .env  # or .envrc or envrc
-
-
-Running the bot
----------------
-- Run the downloaded docker-compose. The first time you should run:
-
-.. code-block:: bash
-
-  docker compose up
-
-  # if you need to run using sudo, don't forget to add the '-E' option to pass environment variables
-  sudo -E docker compose up
-
-- After finalizing the tests and if everything works correctly, you may want to use '-d/--detach' option to run quackamollie in background
-
-.. code-block:: bash
-
-  docker compose up -d
-
-  # if you need to run using sudo, don't forget to add the '-E' option to pass environment variables
-  sudo -E docker compose up -d
-
-
-Test your bot
--------------
+Test your bot in Telegram
+~~~~~~~~~~~~~~~~~~~~~~~~~
 - Start a chat with your bot on Telegram and send `/start` to register.
 
-- If you receive an error message like the following, jump to the next sub-section and then retry the `/start` command
+- If you receive an error message like the following, jump to the `next subsection <Add a user ID>`_ and then retry the `/start` command
 
 .. image:: https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/raw/master/images/access_denied.png
    :alt: Error message in Telegram chat showing the text "Access denied. This is a private bot for private use. Try contacting the administrator if you know them, else please do NOT write to me again."
+   :align: center
 
 - If you receive an answer like this one, this means your bot is running and you registered successfully
 
 .. image:: https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/raw/master/images/start_command.png
    :alt: Answer expected when using the `/start` command for the first time
+   :align: center
 
 - Additionally, you can check the user was created in the database by using `pgcli`
 
 .. code-block:: bash
 
   pip install pgcli
-  source .env  # if you followed this tutorial
   pgcli -U "${QUACKAMOLLIE_DB_USERNAME}" -h "${QUACKAMOLLIE_DB_HOST}" -p "${QUACKAMOLLIE_DB_PORT}" "${QUACKAMOLLIE_DB_NAME}"
   SELECT * FROM users;
 
@@ -378,40 +296,47 @@ Test your bot
 
 .. image:: https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/raw/master/images/error_model_not_set.png
    :alt: Error message in Telegram chat showing the text "No valid model manager is set for this chat. Please use /settings to set a model."
+   :align: center
 
 - Navigate to `Chat Settings` (use `/settings` if needed)
 
 .. image:: https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/raw/master/images/settings_no_default_model.png
    :alt: Answer expected when navigating to the `Chat Settings` section
+   :align: center
 
 - Choose a model in the `Chat Settings/Model Management` section.
   The image below shows the expected output when quackamollie is installed with the extra-dependencies `common` and the model `llama3:latest` have been pulled.
 
 .. image:: https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/raw/master/images/model_management_common_install.png
    :alt: Answer expected when navigating to the `Chat Settings/Model Management` section, for `quackamollie[common]` install
+   :align: center
 
 - After choosing a model, you should expect an output like this one. Here, we chose the model `🦙☝️ llama-index | 🦙☝️ simple-llama-index` for demonstration.
 
 .. image:: https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/raw/master/images/model_llama_index_simple_chosen.png
    :alt: Answer expected when choosing the model `llama-index | simple-llama-index` in the `Chat Settings/Model Management` section
+   :align: center
 
 - If you hit the `Go Back` button, you should see your choice listed
 
 .. image:: https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/raw/master/images/settings_llama_index_simple_chosen.png
    :alt: Answer expected when navigating to the `Chat Settings/Model Management` section after choosing the `llama-index | simple-llama-index` model
+   :align: center
 
 - Send the bot a message and you should obtain an answer like this one (this run was on a personal laptop without GPU, so it is to be expected that executions take more than 10 seconds)
 
 .. image:: https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/raw/master/images/hello_answer_llama_index_simple.png
    :alt: Answer expected when saying "Hello!" to the `llama-index | simple-llama-index` model
+   :align: center
 
 
 Add a user ID
--------------
+~~~~~~~~~~~~~
 - If you didn't know your Telegram user ID and the `/start` command gave you an answer like this one:
 
 .. image:: https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/raw/master/images/access_denied.png
    :alt: Error message in Telegram chat showing the text "Access denied. This is a private bot for private use. Try contacting the administrator if you know them, else please do NOT write to me again."
+   :align: center
 
 - then your ID should be listed in the data directory typically under `data/quackamollie/user_filter/unauthorized_activity.json`
 
@@ -423,11 +348,12 @@ Add a user ID
 
 
 If you've been banned
----------------------
+~~~~~~~~~~~~~~~~~~~~~
 - If you encounter this error, it means you've been added to list of banned users by quackamollie for your bot instance.
 
 .. image:: https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/raw/master/images/user_banned.png
    :alt: Error message in Telegram chat showing the text "Access denied for too many requests. You are now officially banned from this bot and all your next messages will be totally ignored."
+   :align: center
 
 - There is only one way to unban a user, it is by manually editing the file `data/quackamollie/user_filter/banned_users.json`
   and removing the concerned user ID from it. Then you should change your configuration and restart your application for changes to take effects.
@@ -440,99 +366,44 @@ If you've been banned
 
 
 Adding models
--------------
-By default, the image used by the `docker-compose.yml` file is `registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:latest`
-but you can override it to use the image of your choice or build your own image to add your own models or to remove some model managers.
-
-You can achieve this many ways. We recommend you to consider the option of forking the
-`quackamollie_ops <https://gitlab.com/forge_of_absurd_ducks/quackamollie/ops/quackamollie_ops>`_ repository for your own install.
-It implies more setup the first time but it allows you for auto-deployment of new versions.
-
-We present here one of many alternatives that doesn't require a Gitlab repository.
-It consists in creating your own `Dockerfile` for your image and set it for use in your `docker-compose.yml`.
-The goal in this example is to create an image which installs `quackamollie[llama-index-common]` only and deploy it using `docker compose`.
-
-- A very simple `Dockerfile` to achieve this could be:
-
-.. code-block:: dockerfile
-
-  FROM python:3.10-alpine
-
-  RUN pip install --upgrade pip setuptools wheel
-  RUN pip install quackamollie[llama-index-common]
-
-  ENTRYPOINT ["quackamollie"]
-  CMD ["-vv", "serve"]
-
-- A more advanced `Dockerfile` to achieve this could be:
-
-.. code-block:: dockerfile
-
-  ARG PROXY_REGISTRY=
-  FROM ${PROXY_REGISTRY}python:3.10-alpine as base
-
-  ### Builder ###
-  FROM base as builder
-
-  RUN mkdir /install
-  WORKDIR /install
-
-  RUN pip install --upgrade pip setuptools wheel
-  RUN pip install --no-warn-script-location --prefix=/install quackamollie[llama-index-common]
-
-  ### Release ###
-  FROM registry.gitlab.com/forge_of_absurd_ducks/quackamollie/lib/quackamollie_core:latest
-
-  COPY --chown=root:root --from=builder /install /usr/local
-
-  ENTRYPOINT ["quackamollie"]
-  CMD ["-vv", "serve"]
-
-- This more advanced image allows for:
-
-  - Lighter images by using multi-stage docker and isolated installation process
-  - Using the `quackamollie db alembic` commands by extending the `registry.gitlab.com/forge_of_absurd_ducks/quackamollie/lib/quackamollie_core:latest`
-    image (cf. https://gitlab.com/forge_of_absurd_ducks/quackamollie/lib/quackamollie_core/-/raw/master/Dockerfile for more details about this image)
-  - Giving you an idea of what you can achieve in your own `Dockerfile`, feel free to adapt this code to match your needs
-
-- Edit your docker-compose.yml to reference the docker file, in this example we suppose your custom `Dockerfile` is located under `./custom_config/Dockerfile`
-
-.. code-block:: yaml
-
-  services:
-    quackamollie:
-      build:
-        context: ./custom_config
-        dockerfile: Dockerfile
-      container_name: quackamollie
-      command: "-vvvv -c /config/config.yml serve"
-      network_mode: host
-      restart: unless-stopped
-      depends_on:
-        - quackamollie_postgres
-        - quackamollie_db_migration
-      volumes:
-        - ${QUACKAMOLLIE_CONFIG_FILE}:/config/config.yml
+~~~~~~~~~~~~~
+To add models, please see the specific post-installation methods depending on the way you installed Quackamollie and Ollama.
 
 
-- Redeploy
-
-.. code-block:: bash
-
-  docker compose up
-  # or
-  docker compose up -d
-
-  # if you use sudo, don't forget the -E option
-  sudo -E docker compose up -d
-
-
-Management in the application
-=============================
+Management in Telegram
+======================
 For now, in-app management is very limited, sorry for the inconvenience.
 
+User Settings
+-------------
+This section of the settings shows actions a user can do depending on its rights and the current chat.
+
+Documents management
+~~~~~~~~~~~~~~~~~~~~
+This section of settings is currently in development and should be released in quackamollie v0.2.
+
+
+Chat Settings
+-------------
+This section of the settings shows actions a user can do in the current chat. It includes setting the model to use in the current chat.
+
+Model management
+~~~~~~~~~~~~~~~~
+This subsection of the settings lists the available models for the current chat.
+Models are listed through the automatically discovered model managers.
+
+
+Admin Settings
+-------------
+This section of the settings enables administrators or moderators to manage the entire Quackamollie instance.
+This section is currently in development and a first minimal version should be released in quackamollie v0.2.
+
+
+Roadmap
+-------
 What we're currently aiming for is (ordered list):
 
+- admin ability to reload available models
 - admin ability to hide models
 - admin ability to define custom models with custom parameters through model_config
 - user ability to override chat type to private for chats where the user is alone with the bot
@@ -540,16 +411,25 @@ What we're currently aiming for is (ordered list):
 - admin ability to manage globally available model-tools
 
 
-Local development
-=================
+Extending Quackamollie's capacities
+===================================
+
+Adapting my own custom Python model
+-----------------------------------
+In writing, sorry for the inconvenience...
+
+
+Developing my own model manager
+-------------------------------
+In writing, sorry for the inconvenience...
+
+
+Local development of this package
+=================================
 The sections above are at destination of developers or maintainers of this Python package.
 
-
-Project Requirements
---------------------
-
 Virtual environment
-~~~~~~~~~~~~~~~~~~~
+-------------------
 - Setup a virtual environment in python 3.10
 
 .. code-block:: bash
@@ -603,7 +483,6 @@ Run lint
 
 Documentation
 -------------
-
 - Since this package is just a bundle, it contains no documentation. In future release, we may add to this repository
   a documentation with tutorials.
 
@@ -625,13 +504,13 @@ Install
 
 .. code-block:: bash
 
-   pip install dist/quackamollie-0.1b0.tar.gz
+   pip install dist/quackamollie-0.1rc0dev0.tar.gz
 
 - Or install it from wheel
 
 .. code-block:: bash
 
-   pip install dist/quackamollie-0.1b0.whl
+   pip install dist/quackamollie-0.1rc0dev0.whl
 
 - Or install it from PyPi repository
 
@@ -639,7 +518,7 @@ Install
 
    pip install quackamollie  # latest
    # or
-   pip install "quackamollie==0.1b0"
+   pip install "quackamollie==0.1rc0dev0"
 
 
 Docker
@@ -648,7 +527,7 @@ Docker
 
 .. code-block:: bash
 
-   docker build --network=host -t quackamollie:0.1b0 .
+   docker build --network=host -t quackamollie:0.1rc0dev0 .
 
 - The official Docker image of this project is available at: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie
 
@@ -658,7 +537,7 @@ Docker
 
    docker pull registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:latest  # or dev
    # or
-   docker pull registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0
+   docker pull registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1rc0dev0
 
 
 Docker-compose
@@ -707,14 +586,14 @@ Database migration
     docker run --rm --name quackamollie-migration \
     --network host \
     --mount type=bind,source="$(pwd)"/config/config.yml,target=/config/config.yml,readonly \
-    registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0 \
+    registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1rc0dev0 \
     -vvvv -c /config/config.yml db alembic upgrade head
 
     # if you need to run it with sudo don't forget to add the -E option to pass the environment variables you've set
     sudo -E docker run --rm --name quackamollie-migration \
     --network host \
     --mount type=bind,source="$(pwd)"/config/config.yml,target=/config/config.yml,readonly \
-    registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0 \
+    registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1rc0dev0 \
     -vvvv -c /config/config.yml db alembic upgrade head
 
   - Or you can achieve the same in a `docker-compose.yml` file as demonstrated in this repository
@@ -723,7 +602,7 @@ Database migration
 
     services:
       quackamollie_db_migration:
-        image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1b0
+        image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:0.1rc0dev0
         container_name: quackamollie_db_migration
         command: "-vvvv -c /config/config.yml db alembic upgrade head"
         network_mode: host
@@ -756,7 +635,7 @@ Contributing
 ============
 Currently, contributions are frozen because the project is still in very early stages and I have yet to push the whole architecture.
 
-For more details on the general contributing mindset of this project, please refer to `CONTRIBUTING.md <CONTRIBUTING.md>`_.
+For more details on the general contributing mindset of this project, please refer to `CONTRIBUTING.md <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/tree/master/CONTRIBUTING.md>`_.
 
 
 Credits

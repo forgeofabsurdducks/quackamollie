@@ -1,0 +1,53 @@
+services:
+  quackamollie_postgres:
+    image: postgres:${POSTGRES_DOCKER_TAG:-16}
+    container_name: quackamollie_postgres
+    environment:
+      POSTGRES_DB: ${QUACKAMOLLIE_DB_NAME:-quackamollie}
+      POSTGRES_USER: ${QUACKAMOLLIE_DB_USERNAME}
+      POSTGRES_PASSWORD: ${QUACKAMOLLIE_DB_PASSWORD}
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - quackamollie_postgres:/var/lib/postgresql/data
+
+  quackamollie_db_migration:
+    image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:${QUACKAMOLLIE_DOCKER_TAG:-latest}
+    # pull_policy: always
+    container_name: quackamollie_db_migration
+    command: "-vvvv db alembic upgrade head"
+    environment:
+      QUACKAMOLLIE_DB_HOST: ${QUACKAMOLLIE_DB_HOST:-0.0.0.0}
+      QUACKAMOLLIE_DB_PORT: ${QUACKAMOLLIE_DB_PORT:-5432}
+      QUACKAMOLLIE_DB_NAME: ${QUACKAMOLLIE_DB_NAME:-quackamollie}
+      QUACKAMOLLIE_DB_USERNAME: ${QUACKAMOLLIE_DB_USERNAME}
+      QUACKAMOLLIE_DB_PASSWORD: ${QUACKAMOLLIE_DB_PASSWORD}
+    network_mode: host
+    restart: no
+    depends_on:
+      - quackamollie_postgres
+
+  quackamollie:
+    image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:${QUACKAMOLLIE_DOCKER_TAG:-latest}
+    # pull_policy: always
+    container_name: quackamollie
+    command: "-vvvv serve"
+    environment:
+      QUACKAMOLLIE_DB_HOST: ${QUACKAMOLLIE_DB_HOST:-0.0.0.0}
+      QUACKAMOLLIE_DB_PORT: ${QUACKAMOLLIE_DB_PORT:-5432}
+      QUACKAMOLLIE_DB_NAME: ${QUACKAMOLLIE_DB_NAME:-quackamollie}
+      QUACKAMOLLIE_DB_USERNAME: ${QUACKAMOLLIE_DB_USERNAME}
+      QUACKAMOLLIE_DB_PASSWORD: ${QUACKAMOLLIE_DB_PASSWORD}
+      QUACKAMOLLIE_OLLAMA_BASE_URL: http://${QUACKAMOLLIE_OLLAMA_HOST:-0.0.0.0}:11434
+      QUACKAMOLLIE_BOT_TOKEN: ${QUACKAMOLLIE_BOT_TOKEN:-}
+      QUACKAMOLLIE_ADMIN_IDS: ${QUACKAMOLLIE_ADMIN_IDS:-}
+      QUACKAMOLLIE_MODERATOR_IDS: ${QUACKAMOLLIE_MODERATOR_IDS:-}
+      QUACKAMOLLIE_USER_IDS: ${QUACKAMOLLIE_USER_IDS:-}
+    network_mode: host
+    restart: unless-stopped
+    depends_on:
+      - quackamollie_postgres
+      - quackamollie_db_migration
+
+volumes:
+  quackamollie_postgres: {}
