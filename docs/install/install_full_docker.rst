@@ -1,6 +1,6 @@
-========================================================
-Install Ollama locally and deploy Quackamollie in Docker
-========================================================
+========================================
+Deploy Ollama and Quackamollie in Docker
+========================================
 
 .. contents:: Table of Contents
     :depth: 3
@@ -9,7 +9,7 @@ Install Ollama locally and deploy Quackamollie in Docker
 
 ----
 
-This tutorial explains how to install Ollama locally and deploy Quackamollie and its Postgres database in Docker.
+This tutorial explains how to deploy Ollama, Quackamollie and its Postgres database in Docker.
 For other deployment methods, please refer to the `README of the Quackamollie project <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie>`_.
 
 This tutorial have been tested on an Ubuntu 22.04 architecture.
@@ -29,48 +29,38 @@ depending on your OS.
 Alternatively, you can install `Docker Desktop <https://docs.docker.com/desktop/>`_ (for example, if you are on Windows).
 
 
-Ollama
-------
-- Install `Ollama <https://ollama.com/>`_
-- Pull an Ollama model, for example `llama3` or `llama3.1`
-
-.. code-block:: bash
-
-   ollama pull llama3
-
-   # Alternatively, you can use a better model but also bigger (~8Go)
-   ollama pull llama3:8b-instruct-q8_0
-
-
 Telegram
 --------
 - `Create a new Telegram bot using the BotFather <https://core.telegram.org/bots/features#botfather>`_
 - Keep your bot API token at hand, you will need it later
 
 
-Docker-compose file
--------------------
+Docker-compose
+--------------
 
-Getting the file
-~~~~~~~~~~~~~~~~
-Clone the repository or acquire the `localhost.docker-compose.yml` file one of the following way:
+Docker-compose file
+~~~~~~~~~~~~~~~~~~~
+Clone the repository or acquire the `docker-compose.yml` file one of the following way:
 
 - Clone the git repository:
 
   .. code-block:: bash
 
-    git clone https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie
-    cd quackamollie/
+     git clone https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie
+     cd quackamollie/
 
-- Or download the `localhost.docker-compose.yml` file from this repository:
+- Or download the `docker-compose.yml` file from the repository:
 
   .. code-block:: bash
 
-    wget https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/raw/master/localhost.docker-compose.yml
+     wget https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/raw/master/docker-compose.yml
 
 - Or copy (and adapt if needed) this code:
 
   .. code-block:: yaml
+
+    networks:
+      quackamollie:
 
     services:
       quackamollie_postgres:
@@ -80,10 +70,34 @@ Clone the repository or acquire the `localhost.docker-compose.yml` file one of t
           POSTGRES_DB: ${QUACKAMOLLIE_DB_NAME:-quackamollie}
           POSTGRES_USER: ${QUACKAMOLLIE_DB_USERNAME}
           POSTGRES_PASSWORD: ${QUACKAMOLLIE_DB_PASSWORD}
-        network_mode: host
+        # ports:
+        #   - ${QUACKAMOLLIE_DB_PORT:-5432}:5432
+        expose:
+          - 5432
+        hostname: ${QUACKAMOLLIE_DB_HOST:-quackamollie-postgres}
+        networks:
+          - quackamollie
         restart: unless-stopped
         volumes:
           - quackamollie_postgres:/var/lib/postgresql/data
+
+      quackamollie_ollama:
+        image: ollama/ollama:${OLLAMA_DOCKER_TAG:-latest}
+        # pull_policy: always
+        container_name: quackamollie_ollama
+        tty: true
+        entrypoint: ["/usr/bin/bash", "/ollama_entrypoint.sh"]
+        environment:
+          OLLAMA_KEEP_ALIVE: 24h
+        expose:
+          - 11434
+        hostname: ${QUACKAMOLLIE_OLLAMA_HOST:-quackamollie-ollama}
+        networks:
+          - quackamollie
+        restart: unless-stopped
+        volumes:
+          - quackamollie_ollama:/root/.ollama
+          - ./scripts/ollama/ollama_entrypoint.sh:/ollama_entrypoint.sh:ro
 
       quackamollie_db_migration:
         image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:${QUACKAMOLLIE_DOCKER_TAG:-latest}
@@ -91,12 +105,13 @@ Clone the repository or acquire the `localhost.docker-compose.yml` file one of t
         container_name: quackamollie_db_migration
         command: "-vvvv db alembic upgrade head"
         environment:
-          QUACKAMOLLIE_DB_HOST: ${QUACKAMOLLIE_DB_HOST:-0.0.0.0}
+          QUACKAMOLLIE_DB_HOST: ${QUACKAMOLLIE_DB_HOST:-quackamollie-postgres}
           QUACKAMOLLIE_DB_PORT: ${QUACKAMOLLIE_DB_PORT:-5432}
           QUACKAMOLLIE_DB_NAME: ${QUACKAMOLLIE_DB_NAME:-quackamollie}
           QUACKAMOLLIE_DB_USERNAME: ${QUACKAMOLLIE_DB_USERNAME}
           QUACKAMOLLIE_DB_PASSWORD: ${QUACKAMOLLIE_DB_PASSWORD}
-        network_mode: host
+        networks:
+          - quackamollie
         restart: no
         depends_on:
           - quackamollie_postgres
@@ -107,46 +122,83 @@ Clone the repository or acquire the `localhost.docker-compose.yml` file one of t
         container_name: quackamollie
         command: "-vvvv serve"
         environment:
-          QUACKAMOLLIE_DB_HOST: ${QUACKAMOLLIE_DB_HOST:-0.0.0.0}
+          QUACKAMOLLIE_DB_HOST: ${QUACKAMOLLIE_DB_HOST:-quackamollie-postgres}
           QUACKAMOLLIE_DB_PORT: ${QUACKAMOLLIE_DB_PORT:-5432}
           QUACKAMOLLIE_DB_NAME: ${QUACKAMOLLIE_DB_NAME:-quackamollie}
           QUACKAMOLLIE_DB_USERNAME: ${QUACKAMOLLIE_DB_USERNAME}
           QUACKAMOLLIE_DB_PASSWORD: ${QUACKAMOLLIE_DB_PASSWORD}
-          QUACKAMOLLIE_OLLAMA_BASE_URL: http://${QUACKAMOLLIE_OLLAMA_HOST:-0.0.0.0}:11434
+          QUACKAMOLLIE_OLLAMA_BASE_URL: http://${QUACKAMOLLIE_OLLAMA_HOST:-quackamollie-ollama}:11434
           QUACKAMOLLIE_BOT_TOKEN: ${QUACKAMOLLIE_BOT_TOKEN:-}
           QUACKAMOLLIE_ADMIN_IDS: ${QUACKAMOLLIE_ADMIN_IDS:-}
           QUACKAMOLLIE_MODERATOR_IDS: ${QUACKAMOLLIE_MODERATOR_IDS:-}
           QUACKAMOLLIE_USER_IDS: ${QUACKAMOLLIE_USER_IDS:-}
-        network_mode: host
+        networks:
+          - quackamollie
         restart: unless-stopped
         depends_on:
           - quackamollie_postgres
           - quackamollie_db_migration
+          - quackamollie_ollama
 
     volumes:
       quackamollie_postgres: {}
+      quackamollie_ollama: {}
 
 
+Ollama entrypoint script
+~~~~~~~~~~~~~~~~~~~~~~~~
+The major inconvenience of running Ollama in Docker is that it is a bit more cumbersome to download the models you need.
+We give two solutions to this problem:
 
-Important Notice - Beware
-~~~~~~~~~~~~~~~~~~~~~~~~~
-**Beware**: The `localhost.docker-compose.yml` runs Quackamollie using `network_mode: host` which deploys all your application components in your host network.
-We must inform you that this is NOT considered a secure practice for production environments, at least not without enhancing your host network security first
-(which is not covered in this tutorial).
+- the first solution is to use a script encapsulating Ollama commands as an entrypoint for Ollama docker image
+- the second solution is to use Open WebUI ponctually to download and manage your Ollama instance in Docker
 
-Therefore if you intend to deploy Quackamollie with Ollama more securely, you should either:
+This part presents the first solution and the second one is presented in the tutorial
+`Deploy Open WebUI alongside Ollama and Quackamollie in Docker <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/tree/master/docs/install/install_open_webui.rst>`_.
+Both solutions can be used together, the entrypoint at startup and Open WebUI at runtime.
 
-- follow the tutorial to `deploy Ollama and Quackamollie in Docker <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/tree/master/docs/install/install_full_docker.rst>`_ instead of this one (recommended solution)
-- secure your host network (which is always a good idea)
-- additionally, you can adapt the given code with an extra host pointing to the `host-gateway`. However, our tests with such alternative were not successful.
-  Maybe because reaching Ollama using `host.docker.internal` requires you to fine tune your Ollama install configuration, we are not sure.
-  Nevertheless, if you want to try it, you can export `QUACKAMOLLIE_OLLAMA_HOST` environment variable with value `host.docker.internal` and replace
-  `network_mode: host` lines in your `localhost.docker-compose.yml` file with:
+The `docker-compose.yml` above mounts and references a script that should be located at `./scripts/ollama/ollama_entrypoint.sh`.
+You can get this file either:
 
-  .. code-block:: yaml
+- by cloning the git repository:
 
-    extra_hosts:
-      - host.docker.internal:host-gateway
+  .. code-block:: bash
+
+     git clone https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie
+     cd quackamollie/
+
+- by downloading the `ollama_entrypoint.sh` file from the repository:
+
+  .. code-block:: bash
+
+     mkdir -p scripts/ollama/
+     cd scripts/ollama/
+     wget https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/raw/master/scripts/ollama/ollama_entrypoint.sh
+
+- by copying this code:
+
+  .. code-block:: bash
+
+    #!/bin/bash
+
+    # Script from: https://stackoverflow.com/a/78501628/5498624
+
+    # Start Ollama in the background.
+    /bin/ollama serve &
+    # Record Process ID.
+    pid=$!
+
+    # Pause for Ollama to start.
+    sleep 5
+
+    echo "🔴 Retrieve LLAMA3 model..."
+    ollama pull llama3
+    echo "🟢 Done!"
+
+    # Wait for Ollama process to finish.
+    wait $pid
+
+N.B: Don't hesitate to change the line `ollama pull llama3` in this script with the model(s) of your choice.
 
 
 Configuration
@@ -194,19 +246,19 @@ Running the bot
 
 .. code-block:: bash
 
-  docker compose -f localhost.docker-compose.yml up
+  docker compose up
 
 - **N.B**: if you need to run using sudo, don't forget to add the '-E' option to pass environment variables
 
 .. code-block:: bash
 
-  sudo -E docker compose -f localhost.docker-compose.yml up
+  sudo -E docker compose up
 
 - After finalizing the tests and if everything works correctly, you may want to use '-d/--detach' option to run quackamollie in background
 
 .. code-block:: bash
 
-  docker compose -f localhost.docker-compose.yml up -d
+  docker compose up -d
 
 
 Show Quackamollie logs
@@ -215,13 +267,13 @@ Show Quackamollie logs
 
 .. code-block:: bash
 
-  docker compose -f localhost.docker-compose.yml logs quackamollie
+  docker compose logs quackamollie
 
   # Or just
   docker logs quackamollie
 
   # Use the option `-f/--follow` to see the logs produced dynamically
-  docker compose -f localhost.docker-compose.yml logs -f quackamollie
+  docker compose logs -f quackamollie
 
 - After sending a message to the bot, if you are not authorized and not banned, you should see in the logs lines like these with your Telegram ID:
 
@@ -243,28 +295,64 @@ Restart, stop or uninstall Quackamollie
 
 .. code-block:: bash
 
-  docker compose -f localhost.docker-compose.yml restart
+  docker compose restart
 
   # if you need to run it with sudo don't forget to add the -E option to pass the environment variables you've set
-  sudo -E docker compose -f localhost.docker-compose.yml restart
+  sudo -E docker compose restart
 
 - You can stop Quackamollie with:
 
 .. code-block:: bash
 
-  docker compose -f localhost.docker-compose.yml stop
+  docker compose stop
 
   # if you need to run it with sudo don't forget to add the -E option to pass the environment variables you've set
-                  sudo -E docker compose -f localhost.docker-compose.yml stop
+  sudo -E docker compose stop
 
 - You can uninstall Quackamollie with:
 
 .. code-block:: bash
 
-  docker compose -f localhost.docker-compose.yml down
+  docker compose down
 
   # if you want to remove also the application data
-  docker compose -f localhost.docker-compose.yml down -v
+  docker compose down -v
 
   # if you need to run it with sudo don't forget to add the -E option to pass the environment variables you've set
-  sudo -E docker compose -f localhost.docker-compose.yml down
+  sudo -E docker compose down
+
+
+Additional deployment options
+=============================
+
+Running ollama with GPU
+-----------------------
+You can add GPU support for your Ollama deployment by referencing the `docker-compose.yml` `docker-compose.gpu.yml` files when deploying:
+
+.. code-block:: bash
+
+  docker compose -f docker-compose.yml -f docker-compose.gpu.yml up
+
+
+Running OpenWebUI to manage your Ollama instance
+------------------------------------------------
+- You can deploy an Open WebUI instance while deploying Quackamollie by referencing the `docker-compose.open-webui.yml` file when deploying:
+
+  .. code-block:: bash
+
+    docker compose -f docker-compose.yml -f docker-compose.open-webui.yml up
+
+- Then you can hit the `signup` button at the address http://localhost:3000 and register yourself.
+
+  - In Open WebUI, the first registered user is automatically designed as an admin.
+- Then you can typically:
+
+  - go to the admin settings panel
+  - disable new user signup
+  - test your connection to your Ollama instance
+  - download additional models
+- After doing the operations your need to do, and if you don't need your Open WebUI instance anymore, you can stop it:
+
+  .. code-block:: bash
+
+    docker compose -f docker-compose.yml -f docker-compose.open-webui.yml stop quackamollie_open_webui

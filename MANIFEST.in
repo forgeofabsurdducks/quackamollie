@@ -12,7 +12,7 @@ include .gitchangelog.rc
 include .gitlab-ci.yml
 include CHANGELOG.rst
 include CONTRIBUTING.md
-include docker-compose.yml
+include docker-compose*.yml
 include Dockerfile
 include LICENSE
 include Makefile

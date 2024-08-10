@@ -1,0 +1,25 @@
+networks:
+  quackamollie:
+
+services:
+  # Inspired from https://github.com/open-webui/open-webui/blob/main/docker-compose.yaml
+  quackamollie_open_webui:
+    image: ghcr.io/open-webui/open-webui:${OPEN_WEBUI_DOCKER_TAG:-main}
+    pull_policy: always
+    container_name: quackamollie_open_webui
+    environment:
+      OLLAMA_BASE_URL: http://${QUACKAMOLLIE_OLLAMA_HOST:-quackamollie-ollama}:11434
+      WEBUI_SECRET_KEY:
+    hostname: ${OPEN_WEBUI_HOST:-quackamollie-open-webui}
+    ports:
+      - ${OPEN_WEBUI_PORT:-3000}:8080
+    networks:
+      - quackamollie
+    restart: unless-stopped
+    depends_on:
+      - quackamollie_ollama
+    volumes:
+      - quackamollie_open_webui:/app/backend/data
+
+volumes:
+  quackamollie_open_webui: {}

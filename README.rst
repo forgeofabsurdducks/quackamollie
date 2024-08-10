@@ -152,11 +152,8 @@ TODO: Convert to static urls instead of relative ones
 
 It is recommended to install or deploy the project one of the following ways:
 
-- `Install Ollama and Quackamollie locally <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/tree/master/docs/install/install_full_locally.rst>`_
 - `Install Ollama locally and deploy Quackamollie in Docker <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/tree/master/docs/install/install_ollama_locally.rst>`_
 - `Deploy Ollama and Quackamollie in Docker <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/tree/master/docs/install/install_full_docker.rst>`_ (**easiest** and recommended method)
-- `Deploy Ollama in Docker with GPU <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/tree/master/docs/install/install_ollama_gpu.rst>`_
-- `Deploy Open WebUI alongside Ollama and Quackamollie in Docker <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/tree/master/docs/install/install_open_webui.rst>`_ (for Ollama models management)
 - If you want to **automatically deploy** Ollama and Quackamollie in Docker using **your own gitlab-runner** on your own computer,
   we kindly invite you to follow the tutorial of the `quackamollie_ops <https://gitlab.com/forge_of_absurd_ducks/quackamollie/ops/quackamollie_ops>`_ repository
 
@@ -394,7 +391,7 @@ Models are listed through the automatically discovered model managers.
 
 
 Admin Settings
--------------
+--------------
 This section of the settings enables administrators or moderators to manage the entire Quackamollie instance.
 This section is currently in development and a first minimal version should be released in quackamollie v0.2.
 
