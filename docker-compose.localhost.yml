@@ -15,7 +15,7 @@ services:
     image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:${QUACKAMOLLIE_DOCKER_TAG:-latest}
     # pull_policy: always
     container_name: quackamollie_db_migration
-    command: "-vvvv db alembic upgrade head"
+    command: "quackamollie -vvvv db alembic upgrade head"
     environment:
       QUACKAMOLLIE_DB_HOST: ${QUACKAMOLLIE_DB_HOST:-0.0.0.0}
       QUACKAMOLLIE_DB_PORT: ${QUACKAMOLLIE_DB_PORT:-5432}
@@ -25,19 +25,24 @@ services:
     network_mode: host
     restart: no
     depends_on:
-      - quackamollie_postgres
+      quackamollie_ops_postgres:
+        condition: service_healthy
 
   quackamollie:
     image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:${QUACKAMOLLIE_DOCKER_TAG:-latest}
     # pull_policy: always
     container_name: quackamollie
-    command: "-vvvv serve"
+    command: "quackamollie -vvvv serve"
     environment:
+      USER_ID: ${USER_ID:-942}
+      GROUP_ID: ${GROUP_ID:-942}
       QUACKAMOLLIE_DB_HOST: ${QUACKAMOLLIE_DB_HOST:-0.0.0.0}
       QUACKAMOLLIE_DB_PORT: ${QUACKAMOLLIE_DB_PORT:-5432}
       QUACKAMOLLIE_DB_NAME: ${QUACKAMOLLIE_DB_NAME:-quackamollie}
       QUACKAMOLLIE_DB_USERNAME: ${QUACKAMOLLIE_DB_USERNAME}
       QUACKAMOLLIE_DB_PASSWORD: ${QUACKAMOLLIE_DB_PASSWORD}
+      QUACKAMOLLIE_DATA_DIR: ${QUACKAMOLLIE_DATA_DIR:-/quackamollie/data}
+      QUACKAMOLLIE_LOG_DIR: ${QUACKAMOLLIE_LOG_DIR:-/quackamollie/logs}
       QUACKAMOLLIE_OLLAMA_BASE_URL: http://${QUACKAMOLLIE_OLLAMA_HOST:-0.0.0.0}:11434
       QUACKAMOLLIE_BOT_TOKEN: ${QUACKAMOLLIE_BOT_TOKEN:-}
       QUACKAMOLLIE_ADMIN_IDS: ${QUACKAMOLLIE_ADMIN_IDS:-}
@@ -46,8 +51,15 @@ services:
     network_mode: host
     restart: unless-stopped
     depends_on:
-      - quackamollie_postgres
-      - quackamollie_db_migration
+      quackamollie_ops_postgres:
+        condition: service_healthy
+      quackamollie_ops_db_migration:
+        condition: service_completed_successfully
+    volumes:
+      - quackamollie_data:${QUACKAMOLLIE_DATA_DIR:-/quackamollie/data}
+      - quackamollie_logs:${QUACKAMOLLIE_LOG_DIR:-/quackamollie/logs}
 
 volumes:
   quackamollie_postgres: {}
+  quackamollie_data: {}
+  quackamollie_logs: {}

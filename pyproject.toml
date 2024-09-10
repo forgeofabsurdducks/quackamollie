@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "quackamollie"
-version = "0.1rc0"
+version = "0.1rc1dev0"
 description = "Run on your computer your own Telegram LLM chatbot using Ollama backed by models with Langchain or Llama-Index"
 readme = "README.rst"
 authors = [
@@ -23,7 +23,7 @@ classifiers = [
 keywords = ["telegram", "bot", "aiogram", "langchain", "llama-index", "ollama", "llmsherpa"]
 requires-python = ">=3.10"
 dependencies = [
-    "quackamollie-core>=0.1rc1",
+    "quackamollie-core>=0.1rc2",
 ]
 
 [project.optional-dependencies]
