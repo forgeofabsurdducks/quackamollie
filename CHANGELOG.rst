@@ -2,6 +2,23 @@ Changelog
 =========
 
 
+v0.1rc1 (2024-09-12)
+--------------------
+
+Release commit(s)
+~~~~~~~~~~~~~~~~~
+- Release v0.1rc1dev0 → v0.1rc1. [Forge of Absurd Ducks]
+
+Gitlab task(s)
+~~~~~~~~~~~~~~
+- Upgrade to quackamollie-core v0.1rc3. [Quacktor AI]
+- Upgrade to quackamollie-core v0.1rc2. [Quacktor AI]
+
+  - Upgrade quackamollie-core version references to 0.1rc2
+  - Upgrade dockerfile entrypoint & command to match quackamollie-core
+  - Add data & logs volumes in docker-compose
+
+
 v0.1rc0 (2024-08-10)
 --------------------
 
