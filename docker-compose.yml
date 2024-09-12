@@ -53,8 +53,8 @@ services:
       - quackamollie
     restart: no
     depends_on:
-      quackamollie_ops_postgres:
-        condition: service_healthy
+      quackamollie_postgres:
+        condition: service_started
 
   quackamollie:
     image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:${QUACKAMOLLIE_DOCKER_TAG:-latest}
@@ -70,7 +70,6 @@ services:
       QUACKAMOLLIE_DB_USERNAME: ${QUACKAMOLLIE_DB_USERNAME}
       QUACKAMOLLIE_DB_PASSWORD: ${QUACKAMOLLIE_DB_PASSWORD}
       QUACKAMOLLIE_DATA_DIR: ${QUACKAMOLLIE_DATA_DIR:-/quackamollie/data}
-      QUACKAMOLLIE_LOG_DIR: ${QUACKAMOLLIE_LOG_DIR:-/quackamollie/logs}
       QUACKAMOLLIE_OLLAMA_BASE_URL: http://${QUACKAMOLLIE_OLLAMA_HOST:-quackamollie-ollama}:11434
       QUACKAMOLLIE_BOT_TOKEN: ${QUACKAMOLLIE_BOT_TOKEN:-}
       QUACKAMOLLIE_ADMIN_IDS: ${QUACKAMOLLIE_ADMIN_IDS:-}
@@ -80,18 +79,16 @@ services:
       - quackamollie
     restart: unless-stopped
     depends_on:
-      quackamollie_ops_postgres:
-        condition: service_healthy
-      quackamollie_ops_ollama:
+      quackamollie_postgres:
         condition: service_started
-      quackamollie_ops_db_migration:
+      quackamollie_ollama:
+        condition: service_started
+      quackamollie_db_migration:
         condition: service_completed_successfully
     volumes:
       - quackamollie_data:${QUACKAMOLLIE_DATA_DIR:-/quackamollie/data}
-      - quackamollie_logs:${QUACKAMOLLIE_LOG_DIR:-/quackamollie/logs}
 
 volumes:
   quackamollie_postgres: {}
   quackamollie_ollama: {}
   quackamollie_data: {}
-  quackamollie_logs: {}
