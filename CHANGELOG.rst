@@ -2,6 +2,19 @@ Changelog
 =========
 
 
+v0.1 (2024-09-27)
+-----------------
+
+Release commit(s)
+~~~~~~~~~~~~~~~~~
+- Release v0.1dev0 → v0.1. [Forge of Absurd Ducks]
+
+Gitlab task(s)
+~~~~~~~~~~~~~~
+- Cleanup documentation before v0.1 release. [Quacktor AI]
+- Upgrade to quackamollie-core v0.1. [Quacktor AI]
+
+
 v0.1rc1 (2024-09-12)
 --------------------
 
