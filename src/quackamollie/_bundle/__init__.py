@@ -5,6 +5,6 @@ __copyright__ = "Copyright 2024, Forge of Absurd Ducks"
 __credits__ = ["QuacktorAI"]
 __license__ = "MIT"
 __maintainer__ = "QuacktorAI"
-__version__ = "0.1rc1"
+__version__ = "0.1dev0"
 
 quackamollie_version = __version__
