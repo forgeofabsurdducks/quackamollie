@@ -32,7 +32,7 @@ Alternatively, you can install `Docker Desktop <https://docs.docker.com/desktop/
 Ollama
 ------
 - Install `Ollama <https://ollama.com/>`_
-- Pull an Ollama model, for example `llama3` or `llama3.1`
+- Pull an Ollama model, for example :code:`llama3` or :code:`llama3.1`
 
 .. code-block:: bash
 
@@ -53,7 +53,7 @@ Docker-compose file
 
 Getting the file
 ~~~~~~~~~~~~~~~~
-Clone the repository or acquire the `localhost.docker-compose.yml` file one of the following way:
+Clone the repository or acquire the :code:`localhost.docker-compose.yml` file one of the following way:
 
 - Clone the git repository:
 
@@ -62,7 +62,7 @@ Clone the repository or acquire the `localhost.docker-compose.yml` file one of t
     git clone https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie
     cd quackamollie/
 
-- Or download the `localhost.docker-compose.yml` file from this repository:
+- Or download the :code:`localhost.docker-compose.yml` file from this repository:
 
   .. code-block:: bash
 
@@ -89,7 +89,7 @@ Clone the repository or acquire the `localhost.docker-compose.yml` file one of t
         image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:${QUACKAMOLLIE_DOCKER_TAG:-latest}
         # pull_policy: always
         container_name: quackamollie_db_migration
-        command: "-vvvv db alembic upgrade head"
+        command: "quackamollie -vvvv db alembic upgrade head"
         environment:
           QUACKAMOLLIE_DB_HOST: ${QUACKAMOLLIE_DB_HOST:-0.0.0.0}
           QUACKAMOLLIE_DB_PORT: ${QUACKAMOLLIE_DB_PORT:-5432}
@@ -99,19 +99,23 @@ Clone the repository or acquire the `localhost.docker-compose.yml` file one of t
         network_mode: host
         restart: no
         depends_on:
-          - quackamollie_postgres
+          quackamollie_postgres:
+            condition: service_started
 
       quackamollie:
         image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:${QUACKAMOLLIE_DOCKER_TAG:-latest}
         # pull_policy: always
         container_name: quackamollie
-        command: "-vvvv serve"
+        command: "quackamollie -vvvv serve"
         environment:
+          USER_ID: ${USER_ID:-942}
+          GROUP_ID: ${GROUP_ID:-942}
           QUACKAMOLLIE_DB_HOST: ${QUACKAMOLLIE_DB_HOST:-0.0.0.0}
           QUACKAMOLLIE_DB_PORT: ${QUACKAMOLLIE_DB_PORT:-5432}
           QUACKAMOLLIE_DB_NAME: ${QUACKAMOLLIE_DB_NAME:-quackamollie}
           QUACKAMOLLIE_DB_USERNAME: ${QUACKAMOLLIE_DB_USERNAME}
           QUACKAMOLLIE_DB_PASSWORD: ${QUACKAMOLLIE_DB_PASSWORD}
+          QUACKAMOLLIE_DATA_DIR: ${QUACKAMOLLIE_DATA_DIR:-/quackamollie/data}
           QUACKAMOLLIE_OLLAMA_BASE_URL: http://${QUACKAMOLLIE_OLLAMA_HOST:-0.0.0.0}:11434
           QUACKAMOLLIE_BOT_TOKEN: ${QUACKAMOLLIE_BOT_TOKEN:-}
           QUACKAMOLLIE_ADMIN_IDS: ${QUACKAMOLLIE_ADMIN_IDS:-}
@@ -120,17 +124,22 @@ Clone the repository or acquire the `localhost.docker-compose.yml` file one of t
         network_mode: host
         restart: unless-stopped
         depends_on:
-          - quackamollie_postgres
-          - quackamollie_db_migration
+          quackamollie_postgres:
+            condition: service_started
+          quackamollie_db_migration:
+            condition: service_completed_successfully
+        volumes:
+          - quackamollie_data:${QUACKAMOLLIE_DATA_DIR:-/quackamollie/data}
 
     volumes:
       quackamollie_postgres: {}
+      quackamollie_data: {}
 
 
 
 Important Notice - Beware
 ~~~~~~~~~~~~~~~~~~~~~~~~~
-**Beware**: The `localhost.docker-compose.yml` runs Quackamollie using `network_mode: host` which deploys all your application components in your host network.
+**Beware**: The :code:`localhost.docker-compose.yml` runs Quackamollie using :code:`network_mode: host` which deploys all your application components in your host network.
 We must inform you that this is NOT considered a secure practice for production environments, at least not without enhancing your host network security first
 (which is not covered in this tutorial).
 
@@ -138,10 +147,10 @@ Therefore if you intend to deploy Quackamollie with Ollama more securely, you sh
 
 - follow the tutorial to `deploy Ollama and Quackamollie in Docker <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/tree/master/docs/install/install_full_docker.rst>`_ instead of this one (recommended solution)
 - secure your host network (which is always a good idea)
-- additionally, you can adapt the given code with an extra host pointing to the `host-gateway`. However, our tests with such alternative were not successful.
-  Maybe because reaching Ollama using `host.docker.internal` requires you to fine tune your Ollama install configuration, we are not sure.
-  Nevertheless, if you want to try it, you can export `QUACKAMOLLIE_OLLAMA_HOST` environment variable with value `host.docker.internal` and replace
-  `network_mode: host` lines in your `localhost.docker-compose.yml` file with:
+- additionally, you can adapt the given code with an extra host pointing to the :code:`host-gateway`. However, our tests with such alternative were not successful.
+  Maybe because reaching Ollama using :code:`host.docker.internal` requires you to fine tune your Ollama install configuration, we are not sure.
+  Nevertheless, if you want to try it, you can export :code:`QUACKAMOLLIE_OLLAMA_HOST` environment variable with value :code:`host.docker.internal` and replace
+  :code:`network_mode: host` lines in your :code:`localhost.docker-compose.yml` file with:
 
   .. code-block:: yaml
 
@@ -176,13 +185,13 @@ Additional setup:
 
 - N.B: IDs should be separated by commas without space
 
-- To ease deployment, you can create a `.env`, `.envrc` or `envrc` with your environment variables and use the command `source YOUR_FILE_NAME`.
+- To ease deployment, you can create a :code:`.env`, :code:`.envrc` or :code:`envrc` with your environment variables and use the command :code:`source YOUR_FILE_NAME`
 
 
 Advanced configuration
 ----------------------
 You can fine tune your configuration to override more values or to use a configuration file.
-Please see the `Configuration` section of the `README of the Quackamollie repository <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie>`_ for more details.
+Please see the :code:`Configuration` section of the `README of the Quackamollie repository <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie#configuration-methods>`_ for more details.
 
 
 Deployment
@@ -196,13 +205,13 @@ Running the bot
 
   docker compose -f localhost.docker-compose.yml up
 
-- **N.B**: if you need to run using sudo, don't forget to add the '-E' option to pass environment variables
+- **N.B**: if you need to run using :code:`sudo`, don't forget to add the :code:`-E` option to pass environment variables
 
 .. code-block:: bash
 
   sudo -E docker compose -f localhost.docker-compose.yml up
 
-- After finalizing the tests and if everything works correctly, you may want to use '-d/--detach' option to run quackamollie in background
+- After finalizing the tests and if everything works correctly, you may want to use :code:`-d/--detach` option to run quackamollie in background
 
 .. code-block:: bash
 
@@ -234,7 +243,7 @@ Show Quackamollie logs
 
 Test your bot
 -------------
-To test your bot, please follow the section `Post-installation generic methods` of the `README of the Quackamollie project <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie>`_.
+To test your bot, please follow the section :code:`Post-installation generic methods` of the `README of the Quackamollie project <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie#post-installation-generic-methods>`_.
 
 
 Restart, stop or uninstall Quackamollie
@@ -255,7 +264,7 @@ Restart, stop or uninstall Quackamollie
   docker compose -f localhost.docker-compose.yml stop
 
   # if you need to run it with sudo don't forget to add the -E option to pass the environment variables you've set
-                  sudo -E docker compose -f localhost.docker-compose.yml stop
+  sudo -E docker compose -f localhost.docker-compose.yml stop
 
 - You can uninstall Quackamollie with:
 

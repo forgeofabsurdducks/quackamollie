@@ -1,9 +1,9 @@
 ARG PROXY_REGISTRY=
-FROM ${PROXY_REGISTRY}python:3.10-alpine as base
+FROM ${PROXY_REGISTRY}python:3.10-alpine AS base
 
 
 ### Builder ###
-FROM base as builder
+FROM base AS builder
 
 RUN mkdir /install
 WORKDIR /install

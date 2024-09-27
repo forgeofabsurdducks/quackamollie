@@ -40,7 +40,7 @@ Docker-compose
 
 Docker-compose file
 ~~~~~~~~~~~~~~~~~~~
-Clone the repository or acquire the `docker-compose.yml` file one of the following way:
+Clone the repository or acquire the :code:`docker-compose.yml` file one of the following way:
 
 - Clone the git repository:
 
@@ -49,7 +49,7 @@ Clone the repository or acquire the `docker-compose.yml` file one of the followi
      git clone https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie
      cd quackamollie/
 
-- Or download the `docker-compose.yml` file from the repository:
+- Or download the :code:`docker-compose.yml` file from the repository:
 
   .. code-block:: bash
 
@@ -103,7 +103,7 @@ Clone the repository or acquire the `docker-compose.yml` file one of the followi
         image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:${QUACKAMOLLIE_DOCKER_TAG:-latest}
         # pull_policy: always
         container_name: quackamollie_db_migration
-        command: "-vvvv db alembic upgrade head"
+        command: "quackamollie -vvvv db alembic upgrade head"
         environment:
           QUACKAMOLLIE_DB_HOST: ${QUACKAMOLLIE_DB_HOST:-quackamollie-postgres}
           QUACKAMOLLIE_DB_PORT: ${QUACKAMOLLIE_DB_PORT:-5432}
@@ -114,19 +114,23 @@ Clone the repository or acquire the `docker-compose.yml` file one of the followi
           - quackamollie
         restart: no
         depends_on:
-          - quackamollie_postgres
+          quackamollie_postgres:
+            condition: service_started
 
       quackamollie:
         image: registry.gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie:${QUACKAMOLLIE_DOCKER_TAG:-latest}
         # pull_policy: always
         container_name: quackamollie
-        command: "-vvvv serve"
+        command: "quackamollie -vvvv serve"
         environment:
+          USER_ID: ${USER_ID:-942}
+          GROUP_ID: ${GROUP_ID:-942}
           QUACKAMOLLIE_DB_HOST: ${QUACKAMOLLIE_DB_HOST:-quackamollie-postgres}
           QUACKAMOLLIE_DB_PORT: ${QUACKAMOLLIE_DB_PORT:-5432}
           QUACKAMOLLIE_DB_NAME: ${QUACKAMOLLIE_DB_NAME:-quackamollie}
           QUACKAMOLLIE_DB_USERNAME: ${QUACKAMOLLIE_DB_USERNAME}
           QUACKAMOLLIE_DB_PASSWORD: ${QUACKAMOLLIE_DB_PASSWORD}
+          QUACKAMOLLIE_DATA_DIR: ${QUACKAMOLLIE_DATA_DIR:-/quackamollie/data}
           QUACKAMOLLIE_OLLAMA_BASE_URL: http://${QUACKAMOLLIE_OLLAMA_HOST:-quackamollie-ollama}:11434
           QUACKAMOLLIE_BOT_TOKEN: ${QUACKAMOLLIE_BOT_TOKEN:-}
           QUACKAMOLLIE_ADMIN_IDS: ${QUACKAMOLLIE_ADMIN_IDS:-}
@@ -136,13 +140,19 @@ Clone the repository or acquire the `docker-compose.yml` file one of the followi
           - quackamollie
         restart: unless-stopped
         depends_on:
-          - quackamollie_postgres
-          - quackamollie_db_migration
-          - quackamollie_ollama
+          quackamollie_postgres:
+            condition: service_started
+          quackamollie_ollama:
+            condition: service_started
+          quackamollie_db_migration:
+            condition: service_completed_successfully
+        volumes:
+          - quackamollie_data:${QUACKAMOLLIE_DATA_DIR:-/quackamollie/data}
 
     volumes:
       quackamollie_postgres: {}
       quackamollie_ollama: {}
+      quackamollie_data: {}
 
 
 Ollama entrypoint script
@@ -153,11 +163,10 @@ We give two solutions to this problem:
 - the first solution is to use a script encapsulating Ollama commands as an entrypoint for Ollama docker image
 - the second solution is to use Open WebUI ponctually to download and manage your Ollama instance in Docker
 
-This part presents the first solution and the second one is presented in the tutorial
-`Deploy Open WebUI alongside Ollama and Quackamollie in Docker <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie/-/tree/master/docs/install/install_open_webui.rst>`_.
+This part presents the first solution and the second one is presented in the section `Running OpenWebUI to manage your Ollama instance`_ of this tutorial.
 Both solutions can be used together, the entrypoint at startup and Open WebUI at runtime.
 
-The `docker-compose.yml` above mounts and references a script that should be located at `./scripts/ollama/ollama_entrypoint.sh`.
+The :code:`docker-compose.yml` above mounts and references a script that should be located at :code:`./scripts/ollama/ollama_entrypoint.sh`.
 You can get this file either:
 
 - by cloning the git repository:
@@ -167,7 +176,7 @@ You can get this file either:
      git clone https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie
      cd quackamollie/
 
-- by downloading the `ollama_entrypoint.sh` file from the repository:
+- by downloading the :code:`ollama_entrypoint.sh` file from the repository:
 
   .. code-block:: bash
 
@@ -198,7 +207,7 @@ You can get this file either:
     # Wait for Ollama process to finish.
     wait $pid
 
-N.B: Don't hesitate to change the line `ollama pull llama3` in this script with the model(s) of your choice.
+N.B: Don't hesitate to change the line :code:`ollama pull llama3` in this script with the model(s) of your choice.
 
 
 Configuration
@@ -228,13 +237,13 @@ Additional setup:
 
 - N.B: IDs should be separated by commas without space
 
-- To ease deployment, you can create a `.env`, `.envrc` or `envrc` with your environment variables and use the command `source YOUR_FILE_NAME`.
+- To ease deployment, you can create a :code:`.env`, :code:`.envrc` or :code:`envrc` with your environment variables and use the command :code:`source YOUR_FILE_NAME`
 
 
 Advanced configuration
 ----------------------
 You can fine tune your configuration to override more values or to use a configuration file.
-Please see the `Configuration` section of the `README of the Quackamollie repository <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie>`_ for more details.
+Please see the :code:`Configuration` section of the `README of the Quackamollie repository <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie#configuration-methods>`_ for more details.
 
 
 Deployment
@@ -248,13 +257,13 @@ Running the bot
 
   docker compose up
 
-- **N.B**: if you need to run using sudo, don't forget to add the '-E' option to pass environment variables
+- **N.B**: if you need to run using :code:`sudo`, don't forget to add the :code:`-E` option to pass environment variables
 
 .. code-block:: bash
 
   sudo -E docker compose up
 
-- After finalizing the tests and if everything works correctly, you may want to use '-d/--detach' option to run quackamollie in background
+- After finalizing the tests and if everything works correctly, you may want to use :code:`-d/--detach` option to run quackamollie in background
 
 .. code-block:: bash
 
@@ -286,7 +295,7 @@ Show Quackamollie logs
 
 Test your bot
 -------------
-To test your bot, please follow the section `Post-installation generic methods` of the `README of the Quackamollie project <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie>`_.
+To test your bot, please follow the section :code:`Post-installation generic methods` of the `README of the Quackamollie project <https://gitlab.com/forge_of_absurd_ducks/quackamollie/quackamollie#post-installation-generic-methods>`_.
 
 
 Restart, stop or uninstall Quackamollie
@@ -327,7 +336,7 @@ Additional deployment options
 
 Running ollama with GPU
 -----------------------
-You can add GPU support for your Ollama deployment by referencing the `docker-compose.yml` `docker-compose.gpu.yml` files when deploying:
+You can add GPU support for your Ollama deployment by referencing the :code:`docker-compose.yml` and :code:`docker-compose.gpu.yml` files when deploying:
 
 .. code-block:: bash
 
@@ -336,21 +345,23 @@ You can add GPU support for your Ollama deployment by referencing the `docker-co
 
 Running OpenWebUI to manage your Ollama instance
 ------------------------------------------------
-- You can deploy an Open WebUI instance while deploying Quackamollie by referencing the `docker-compose.open-webui.yml` file when deploying:
+- You can deploy an Open WebUI instance while deploying Quackamollie by referencing the :code:`docker-compose.open-webui.yml` file when deploying:
 
   .. code-block:: bash
 
     docker compose -f docker-compose.yml -f docker-compose.open-webui.yml up
 
-- Then you can hit the `signup` button at the address http://localhost:3000 and register yourself.
+- Then you can hit the :code:`signup` button at the address :code:`http://localhost:3000` and register yourself.
 
   - In Open WebUI, the first registered user is automatically designed as an admin.
+
 - Then you can typically:
 
   - go to the admin settings panel
   - disable new user signup
   - test your connection to your Ollama instance
   - download additional models
+
 - After doing the operations your need to do, and if you don't need your Open WebUI instance anymore, you can stop it:
 
   .. code-block:: bash
